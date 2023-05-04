@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Add/Delete Directory</title>
+    {% load bootstrap5 %}
+    {% bootstrap_css %}
+    {% bootstrap_javascript %}
+</head>
+<body>
+{% block content %}
+    <div class="container mt-4">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header">{{ title }}</div>
+                    <div class="card-body">
+                        <h3>Delete Directory</h3>
+                        <hr>
+                        <form action="{% url 'delete_directory' %}" method="post">
+                            {% csrf_token %}
+                            <div class="form-group">
+                                <label for="id_directory">Directory:</label>
+                                <select name="directory" id="id_directory" class="form-control">
+                                    <option value="">--Select directory--</option>
+                                    {% for directory in directories %}
+                                        <option value="{{ directory.id }}">{{ directory.name }}</option>
+                                    {% endfor %}
+                                </select>
+                                {% if form.errors.directory %}
+                                    <small class="text-danger">{{ form.errors.directory }}</small>
+                                {% endif %}
+                            </div>
+                            <button type="submit" class="btn btn-danger">Delete</button>
+                        </form>
+                        <br>
+                        <hr>
+                        <h3>Add Directory</h3>
+                        <hr>
+                        <form action="{% url 'add_directory' %}" method="post">
+                            {% csrf_token %}
+                            <div class="form-group">
+                                <label for="id_name">Name:</label>
+                                <input type="text" name="name" id="id_name" class="form-control" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="id_description">Description:</label>
+                                <input type="text" name="description" id="id_description" class="form-control">
+                            </div>
+                            <div class="form-group">
+                                <label for="id_parent_directory">Parent Directory:</label>
+                                <select name="parent_directory" id="id_parent_directory" class="form-control">
+                                    <option value="">--None--</option>
+                                    {% for directory in directories %}
+                                        <option value="{{ directory.id }}">{{ directory.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Add</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+</body>
+</html>

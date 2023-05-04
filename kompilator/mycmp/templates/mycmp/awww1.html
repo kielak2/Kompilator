@@ -1,0 +1,113 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pl">
+
+    <head>
+        <title>Compiler</title>
+        <meta charset="UTF-8">
+        <link rel="stylesheet" href="{% static 'mycmp/style.css' %}">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css" />
+    </head>
+    <body>
+        <div id="grid-container">
+            <div class="menu-bar">
+              <i class="bi bi-brightness-high-fill" id="toggleDark"></i>
+                <nav class="navbar">
+                  <ul class="nav-menu">
+                    <li class="nav-item">
+                      <a href="http://127.0.0.1:8000/mycmp/delete_directory/" class="nav-link">Plik</a>
+                    </li>
+                    <li class="nav-item">
+                      <a href="#" class="nav-link">Edycja</a>
+                    </li>
+                    <li class="nav-item">
+                      <a href="#" class="nav-link">Opcje</a>
+                    </li>
+                  </ul>
+                  <div class="hamburger">
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                  </div>
+                </nav>
+            </div>
+            <div class="choose-file">
+            <ul id="myUL">
+                {% for directory in directories %}
+                    {% for branch, obj in directory.as_tree %}
+                        {% if obj %}
+                            {% if obj.is_file %}
+                                <li><a href="#" data-url="{{ obj.get_absolute_url }}">{{ obj.name }}</a></li>
+                            {% elif obj.is_directory %}
+                                <li><span class="caret">{{ obj.name }}</span>
+                                {% if branch %}
+                                    <ul class="nested">
+                                {% else %}
+                                    </li>
+                                {% endif %}
+                            {% endif %}
+                        {% else %}
+                            {% if branch %}
+                                </ul>
+                            {% endif %}
+                        {% endif %}
+                    {% endfor %}
+                {% endfor %}
+            </ul>
+
+
+            </div>
+            <div class="tab-box"><h1>Lorem ipsum dolor </h1></div>
+            <div class="code-box">Lorem ipsuastias iu ut.</div>
+            <div class="footer-head">
+                <button onclick="openTab(event, 'Tab1')">Tab1</button>
+                <button onclick="openTab(event, 'Tab2')">Tab2</button>
+                <button onclick="openTab(event, 'Tab3')">Tab3</button>
+                <button onclick="openTab(event, 'Tab4')">Tab4</button>
+            </div>
+            <div id="Tab1" class="footer">
+                <h2>Wybierz Procesor:</h2>
+                <ul>
+                  <li><input type="radio" name="processor" value="x86" id="x86"><label for="x86">x86</label></li>
+                  <li><input type="radio" name="processor" value="ARM" id="arm"><label for="arm">ARM</label></li>
+                  <li><input type="radio" name="processor" value="MIPS" id="mips"><label for="mips">MIPS</label></li>
+                </ul>
+              </div>
+
+              <div id="Tab2" class="footer">
+                <h2>Opcje Procesora:</h2>
+                <ul>
+                  <li><input type="checkbox" name="option1" id="option1"><label for="option1">Option 1</label></li>
+                  <li><input type="checkbox" name="option2" id="option2"><label for="option2">Option 2</label></li>
+                  <li><input type="checkbox" name="option3" id="option3"><label for="option3">Option 3</label></li>
+
+                </ul>
+              </div>
+
+              <div id="Tab3" class="footer">
+                <h2>Standard Kodu Źródłowego:</h2>
+                <ul>
+                  <li>
+                    <label class="custom-selector">
+                      <span>Wybierz standard dla swojego kodu:</span>
+                      <select name="source-code-standard">
+                        <option value="c99">C99</option>
+                        <option value="c11">C11</option>
+                      </select>
+                    </label>
+                  </li>
+                </ul>
+              </div>
+
+              <div id="Tab4" class="footer">
+                <h2>Opcje Generowania Kodu:</h2>
+                <ul>
+                  <li><input type="checkbox" name="external-stack" id="external-stack"><label for="external-stack">Zewnętrzny stos</label></li>
+                  <li><input type="checkbox" name="profile-data" id="profile-data"><label for="profile-data">Generuj dane pomocnicze do profilowania</label></li>
+                  <li><input type="checkbox" name="debug-info" id="debug-info"><label for="debug-info">Dołącz informacje do debugowania</label></li>
+                </ul>
+              </div>
+        </div>
+        <script src="{% static 'mycmp/script.js' %}"></script>
+    </body>
+</html>
