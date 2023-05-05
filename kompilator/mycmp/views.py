@@ -5,7 +5,7 @@ from django.template import loader
 from django.http import HttpResponse
 from .models import Directory
 from .models import File
-from .forms import UploadFileForm, AddDirectoryForm, DeleteDirectoryForm
+from .forms import UploadFileForm, AddDirectoryForm, DeleteDirectoryForm, DeleteFileForm
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
 
@@ -33,6 +33,18 @@ def upload_file(request):
     else:
         form = UploadFileForm()
     return render(request, 'mycmp/upload.html', {'form': form, 'directories': directories})
+
+def delete_file(request):
+    files = File.objects.all()
+    if request.method == 'POST':
+        form = DeleteFileForm(request.POST)
+        if form.is_valid():
+            file = form.cleaned_data['file']
+            file.delete()
+            return redirect('aww1')
+    else:
+        form = DeleteFileForm()
+    return render(request, 'mycmp/delete_file.html', {'form': form, 'files': files})
 
 
 def add_directory(request):

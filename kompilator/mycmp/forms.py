@@ -1,7 +1,9 @@
 from django import forms
-from .models import Directory
+from .models import Directory, File
+from multiupload.fields import MultiFileField
+
 class UploadFileForm(forms.Form):
-    file = forms.FileField(widget=forms.ClearableFileInput(attrs={'multiple': True}))
+    file = MultiFileField(min_num=1, max_num=10, max_file_size=1024*1024*5)
     directory = forms.ModelChoiceField(queryset=Directory.objects.all())
 
 class AddDirectoryForm(forms.ModelForm):
@@ -19,3 +21,6 @@ class AddDirectoryForm(forms.ModelForm):
 
 class DeleteDirectoryForm(forms.Form):
     directory = forms.ModelChoiceField(queryset=Directory.objects.all())
+
+class DeleteFileForm(forms.Form):
+    file = forms.ModelChoiceField(queryset=File.objects.all())
