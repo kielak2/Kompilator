@@ -20,20 +20,7 @@
             <div class="card-body">
                 <form method="post" enctype="multipart/form-data">
                     {% csrf_token %}
-                    <div class="form-group">
-                        <label for="id_name">Name:</label>
-                        <input type="text" class="form-control" name="name" id="id_name" required>
-                        {% if form.errors.name %}
-                            <small class="form-text text-danger">{{ form.errors.name }}</small>
-                        {% endif %}
-                    </div>
-                    <div class="form-group">
-                        <label for="id_description">Description:</label>
-                        <textarea class="form-control" name="description" id="id_description"></textarea>
-                        {% if form.errors.description %}
-                            <small class="form-text text-danger">{{ form.errors.description }}</small>
-                        {% endif %}
-                    </div>
+
                     <div class="form-group">
                         <label for="id_directory">Directory:</label>
                         <select name="directory" id="id_directory" class="form-control">
@@ -48,11 +35,10 @@
                     </div>
                     <div class="form-group">
                         <label for="id_file">File:</label>
-                        <input type="file" name="file" id="id_file" class="form-control-file" required>
+                        <input type="file" name="file" id="id_file" class="form-control-file" required multiple>
                         {% if form.errors.file %}
                             <small class="form-text text-danger">{{ form.errors.file }}</small>
                         {% endif %}
-                    </div>
                     <button type="submit" class="btn btn-primary">Add File</button>
                 </form>
             </div>
