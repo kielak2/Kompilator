@@ -7,6 +7,7 @@
         <meta charset="UTF-8">
         <link rel="stylesheet" href="{% static 'mycmp/style.css' %}">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     </head>
     <body>
         <div id="grid-container">
@@ -15,99 +16,121 @@
                 <nav class="navbar">
                   <ul class="nav-menu">
                     <li class="nav-item">
-                      <a href="http://127.0.0.1:8000/mycmp/delete_directory/" class="nav-link">Plik</a>
+                      <a href="http://127.0.0.1:8000/mycmp/upload_file/" class="nav-link">Pliki</a>
                     </li>
                     <li class="nav-item">
-                      <a href="http://127.0.0.1:8000/mycmp/upload_file/" class="nav-link">Edycja</a>
+                      <a href="http://127.0.0.1:8000/mycmp/delete_directory/" class="nav-link">Foldery</a>
                     </li>
                     <li class="nav-item">
                       <a href="#" class="nav-link">Opcje</a>
                     </li>
                   </ul>
                   <div class="hamburger">
-                    <span class="bar"></span>
+                    <span class="bar"></span>s
                     <span class="bar"></span>
                     <span class="bar"></span>
                   </div>
                 </nav>
             </div>
             <div class="choose-file">
-            <ul id="myUL">
-                {% for directory in directories %}
-                    {% for branch, obj in directory.as_tree %}
-                        {% if obj %}
-                            {% if obj.is_file %}
-                                <li><a href="#" data-url="{{ obj.get_absolute_url }}">{{ obj.name }}</a></li>
-                            {% elif obj.is_directory %}
-                                <li><span class="caret">{{ obj.name }}</span>
-                                {% if branch %}
-                                    <ul class="nested">
-                                {% else %}
-                                    </li>
-                                {% endif %}
-                            {% endif %}
-                        {% else %}
-                            {% if branch %}
-                                </ul>
-                            {% endif %}
-                        {% endif %}
-                    {% endfor %}
+                <ul id="myUL">
+                    {% for directory in directories %}
+                    {% if directory.parent_directory == NULL %}
+                        {% include 'mycmp/folder.html' with directory=directory %}
+                    {% endif %}
                 {% endfor %}
-            </ul>
-
-
+                {% for file in files %}
+                    {% if file.directory == NULL %}
+                        <li>{{ file.name }}</li>
+                    {% endif %}
+                {% endfor %}
+                </ul>
             </div>
-            <div class="tab-box"><h1>Lorem ipsum dolor </h1></div>
-            <div class="code-box">Lorem ipsuastias iu ut.</div>
+
+            <div class="tab-box">
+                <form action="{% url 'runcode' %}" method="GET" id="myForm">
+                    {% csrf_token %}
+                    <textarea type="text" class="content" id="code" name="codearea">{{ code }}</textarea>
+                    <input type="hidden" id="standard" name="standard" value="">
+                    <input type="hidden" id="procesor" name="procesor" value="">
+                    <input type="hidden" id="optimization" name="optimization" value="">
+                    <input type="hidden" id="MCSoption" name="MCSoption" value="">
+                    <input type="hidden" id="Z80Soption" name="Z80Soption" value="">
+                    <input type="hidden" id="STMoption" name="STMoption" value="">
+
+                </form>
+            </div>
+
+
             <div class="footer-head">
-                <button onclick="openTab(event, 'Tab1')">Tab1</button>
-                <button onclick="openTab(event, 'Tab2')">Tab2</button>
-                <button onclick="openTab(event, 'Tab3')">Tab3</button>
-                <button onclick="openTab(event, 'Tab4')">Tab4</button>
+                <button onclick="openTab(event, 'Tab1')">Standard</button>
+                <button onclick="openTab(event, 'Tab2')">Optymalizacje</button>
+                <button onclick="openTab(event, 'Tab3')">Procesor</button>
+                <button onclick="openTab(event, 'Tab4')">Zależne</button>
+                <button type="submit" id="compile-btn" class="btn btn-primary">Kompiluj</button>
+                <button onclick="downloadFile()" id="download-btn"><i class="fa fa-download"></i>Pobierz</button>
             </div>
             <div id="Tab1" class="footer">
-                <h2>Wybierz Procesor:</h2>
+                <h2>Standard Kodu Źródłowego:</h2>
                 <ul>
-                  <li><input type="radio" name="processor" value="x86" id="x86"><label for="x86">x86</label></li>
-                  <li><input type="radio" name="processor" value="ARM" id="arm"><label for="arm">ARM</label></li>
-                  <li><input type="radio" name="processor" value="MIPS" id="mips"><label for="mips">MIPS</label></li>
+                  <li><input type="radio" name="standard" value="C89" id="C89"><label for="C89">C89</label></li>
+                  <li><input type="radio" name="standard" value="C99" id="C99"><label for="C99">C99</label></li>
+                  <li><input type="radio" name="standard" value="C11" id="C11"><label for="C11">C11</label></li>
                 </ul>
               </div>
 
               <div id="Tab2" class="footer">
-                <h2>Opcje Procesora:</h2>
+                <h2>Optymalizacje kompilacji:</h2>
                 <ul>
-                  <li><input type="checkbox" name="option1" id="option1"><label for="option1">Option 1</label></li>
-                  <li><input type="checkbox" name="option2" id="option2"><label for="option2">Option 2</label></li>
-                  <li><input type="checkbox" name="option3" id="option3"><label for="option3">Option 3</label></li>
-
+                  <li><input type="radio" name="optimization" value="Os" id="Os"><label for="Os">Optymalizacja rozmiaru -Os (kosztem szybkości)</label></li>
+                  <li><input type="radio" name="optimization" value="O1" id="O1"><label for="O1">Optymalizacja rozmiaru i szybkości -O1</label></li>
+                  <li><input type="radio" name="optimization" value="O2" id="O2"><label for="O2">Optymalizacja szybkości -O2 (kosztem rozmiaru)</label></li>
                 </ul>
               </div>
 
               <div id="Tab3" class="footer">
-                <h2>Standard Kodu Źródłowego:</h2>
+               <h2>Wybierz Procesor:</h2>
                 <ul>
-                  <li>
-                    <label class="custom-selector">
-                      <span>Wybierz standard dla swojego kodu:</span>
-                      <select name="source-code-standard">
-                        <option value="c99">C99</option>
-                        <option value="c11">C11</option>
-                      </select>
-                    </label>
-                  </li>
+                  <li><input type="radio" name="procesor" value="mmcs51" id="mmcs51"><label for="mmcs51">MCS51</label></li>
+                  <li><input type="radio" name="procesor" value="mz80" id="mz80"><label for="mz80">Z80</label></li>
+                  <li><input type="radio" name="procesor" value="mstm8" id="mstm8"><label for="mstm8">STM8</label></li>
                 </ul>
               </div>
 
               <div id="Tab4" class="footer">
-                <h2>Opcje Generowania Kodu:</h2>
-                <ul>
-                  <li><input type="checkbox" name="external-stack" id="external-stack"><label for="external-stack">Zewnętrzny stos</label></li>
-                  <li><input type="checkbox" name="profile-data" id="profile-data"><label for="profile-data">Generuj dane pomocnicze do profilowania</label></li>
-                  <li><input type="checkbox" name="debug-info" id="debug-info"><label for="debug-info">Dołącz informacje do debugowania</label></li>
-                </ul>
+                  <div id="MCS">
+                    <h3>MCS51 - wybierz rozmiar:</h3>
+                    <ul>
+                        <li><input type="radio" name="MCSoption" value="model-small" id="model-small2"><label for="model-small">model-small</label></li>
+                          <li><input type="radio" name="MCSoption" value="model-medium" id="model-medium2"><label for="model-medium">model-medium</label></li>
+                          <li><input type="radio" name="MCSoption" value="model-large" id="model-large2"><label for="model-large">model-large</label></li>
+                    </ul>
+                  </div>
+                  <div id="Z80">
+                    <h3>Z80 - wybierz asembler:</h3>
+                    <ul>
+                      <li><input type="radio" name="Z80Soption" value="rgbds" id="rgbds"><label for="rgbds">rgbds</label></li>
+                      <li><input type="radio" name="Z80Soption" value="sdasz80" id="sdasz80"><label for="sdasz80">sdasz80</label></li>
+                      <li><input type="radio" name="Z80Soption" value="isas" id="isas"><label for="isas">isas</label></li>
+                    </ul>
+                  </div>
+                  <div id="STM">
+                    <h3>STM8 - wybierz rozmiar:</h3>
+                    <ul>
+                        <li><input type="radio" name="STMoption" value="model-small" id="model-small"><label for="model-small">model-small</label></li>
+                          <li><input type="radio" name="STMoption" value="model-medium" id="model-medium"><label for="model-medium">model-medium</label></li>
+                          <li><input type="radio" name="STMoption" value="model-large" id="model-large"><label for="model-large">model-large</label></li>
+                    </ul>
+                  </div>
               </div>
+
+             <div class="code-box">
+                <pre>
+                     {{ output }}
+                </pre>
+
+            </div>
         </div>
-        <script src="{% static 'mycmp/script.js' %}"></script>
+       <script src="{% static 'mycmp/script.js' %}"></script>
     </body>
 </html>

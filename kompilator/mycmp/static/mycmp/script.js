@@ -60,28 +60,114 @@ document.querySelectorAll(".nav-link").forEach(n => n.
   }))
 
 
-  //selector 
-  const selector = document.querySelector('.custom-selector');
-  selector.addEventListener('change', e => {
-    console.log('changed', e.targer.value);
-  })
+  //selector
 
-const codeBox = document.querySelector('.code-box');
+const content = document.querySelector(".content");
+const files = document.getElementsByClassName("file");
+for (let k = 0; k < files.length; ++k) {
+    files[k].addEventListener("click", function() {
+        content.textContent = this.getAttribute("data-content");
+    });
+}
 
-// Add event listener to scroll the code box when the mouse wheel is used
-codeBox.addEventListener('wheel', function(event) {
-  event.preventDefault();
+ var standardRadio = document.querySelectorAll('#Tab1 input[type="radio"]');
 
-  // How much to scroll on each mouse wheel event
-  const scrollAmount = 30;
+  // Add event listeners to the radio buttons
+  standardRadio.forEach(function (radio) {
+    radio.addEventListener('click', function () {
+      // Update the value of the hidden input field with the selected radio button's value
+      document.querySelector('#standard').value = this.value;
+    });
+  });
 
-  // Determine how far to scroll based on the direction of the mouse wheel
-  const delta = Math.sign(event.deltaY);
-  const scrollDelta = delta * scrollAmount;
+  // Get all the radio buttons inside the #Tab2 element
+var optimizationRadio = document.querySelectorAll('#Tab2 input[type="radio"]');
 
-  // Scroll the code box
-  codeBox.scrollTop += scrollDelta;
+// Add event listeners to the radio buttons
+optimizationRadio.forEach(function (radio) {
+  radio.addEventListener('click', function () {
+    // Update the value of the hidden input field with the selected radio button's value
+    document.querySelector('#optimization').value = this.value;
+  });
+});
+
+var standardProcesor = document.querySelectorAll('#Tab3 input[type="radio"]');
+
+  // Add event listeners to the radio buttons
+  standardProcesor.forEach(function (radio) {
+    radio.addEventListener('click', function () {
+      // Update the value of the hidden input field with the selected radio button's value
+      document.querySelector('#procesor').value = this.value;
+    });
+  });
+
+var compileBtn = document.getElementById('compile-btn');
+var myForm = document.getElementById('myForm');
+
+compileBtn.addEventListener('click', function() {
+  const selectedStandard = document.querySelector('#standard').value;
+  const selectedProcessor = document.querySelector('#procesor').value;
+  const selectedOptimization = document.querySelector('#optimization').value;
+  localStorage.setItem('selectedStandard', selectedStandard);
+  localStorage.setItem('selectedProcessor', selectedProcessor);
+  localStorage.setItem('selectedOptimization', selectedOptimization);
+  myForm.submit();
+});
+
+const selectedStandard = localStorage.getItem('selectedStandard');
+const selectedProcessor = localStorage.getItem('selectedProcessor');
+const selectedOptimization = localStorage.getItem('selectedOptimization');
+
+if (selectedStandard) {
+  document.querySelector(`input[name="standard"][value="${selectedStandard}"]`).checked = true;
+}
+
+if (selectedProcessor) {
+  document.querySelector(`input[name="procesor"][value="${selectedProcessor}"]`).checked = true;
+}
+
+if (selectedOptimization) {
+  document.querySelector(`input[name="optimization"][value="${selectedOptimization}"]`).checked = true;
+}
+
+standardRadio.forEach(function (radio) {
+  if (radio.checked) {
+    // If a radio button is checked, set the value of the hidden input field to its value
+     document.querySelector('#standard').value = radio.value;
+  }
+});
+
+standardProcesor.forEach(function (radio) {
+  if (radio.checked) {
+    // If a radio button is checked, set the value of the hidden input field to its value
+     document.querySelector('#procesor').value = radio.value;
+  }
+});
+
+
+optimizationRadio.forEach(function (radio) {
+  if (radio.checked) {
+    // If a radio button is checked, set the value of the hidden input field to its value
+     document.querySelector('#optimization').value = radio.value;
+  }
 });
 
 
 
+function downloadFile() {
+  const content = document.querySelector('.code-box pre').textContent;
+  const filename = prompt('Enter filename', 'file.asm');
+
+  if (filename) {
+    const blob = new Blob([content], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = filename;
+
+    link.click();
+
+    URL.revokeObjectURL(url);
+  }
+}

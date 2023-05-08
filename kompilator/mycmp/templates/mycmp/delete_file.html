@@ -34,6 +34,33 @@
             <button type="submit" class="btn btn-danger">Delete</button>
           </form>
           <br>
+
+          <hr>
+          <h3>Add File</h3>
+          <hr>
+          <form action="{% url 'upload_file' %}" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="form-group">
+              <label for="id_directory">Directory:</label>
+              <select name="directory" id="id_directory" class="form-control">
+                <option value="">--Select directory--</option>
+                {% for directory in directories %}
+                <option value="{{ directory.id }}">{{ directory.name }}</option>
+                {% endfor %}
+              </select>
+              {% if form.errors.directory %}
+              <small class="text-danger">{{ form.errors.directory }}</small>
+              {% endif %}
+            </div>
+            <div class="form-group">
+              <label for="id_file">File:</label>
+              <input type="file" name="file" id="id_file" class="form-control-file" required multiple>
+              {% if form.errors.file %}
+              <small class="text-danger">{{ form.errors.file }}</small>
+              {% endif %}
+            </div>
+            <button type="submit" class="btn btn-primary">Add File</button>
+          </form>
         </div>
       </div>
     </div>

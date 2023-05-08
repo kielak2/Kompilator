@@ -1,0 +1,27 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+</head>
+<body>
+  <li>
+    <span class="caret">{{ directory.name }}</span>
+     <ul class="nested">
+        {% for subfolder in directory.subdirectories.all %}
+            {% if subfolder.parent_directory == directory %}
+                {% include 'mycmp/folder.html' with directory=subfolder %}
+            {% endif %}
+        {% endfor %}
+
+        {% for file in files %}
+            {% if file.directory == directory %}
+               <li class="file" data-content="{{ file.file_content }}">{{ file.name }}</li>
+            {% endif %}
+        {% endfor %}
+    </ul>
+</li>
+</body>
+</html>

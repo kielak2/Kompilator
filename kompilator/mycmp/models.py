@@ -11,32 +11,9 @@ class Directory(models.Model):
     last_modified_date = models.DateTimeField(auto_now=True)
     parent_directory = models.ForeignKey('self', null=True, blank=True, related_name='subdirectories', on_delete=models.CASCADE)
 
-    def is_file(self):
-        return False
-
-    def is_directory(self):
-        return True
-
-    def as_tree(self):
-        children = list(self.subdirectories.all())
-        files = list(self.files.all())
-        branch = bool(children or files)
-        yield branch, self
-        if children:
-            for child in children:
-                for next in child.as_tree():
-                    yield next
-                for file in files:
-                    yield False, file
-        else:
-            for file in files:
-                yield False, file
-        yield branch, None
 
     def __str__(self):
         return self.name
-
-
 
 class File(models.Model):
     name = models.CharField(max_length=255)
@@ -48,12 +25,8 @@ class File(models.Model):
     last_modified_at = models.DateTimeField(auto_now=True)
     directory = models.ForeignKey(Directory, on_delete=models.CASCADE, related_name='files')
     file = models.FileField(null=True)
+    file_content = models.TextField(null=True, blank=True)
 
-    def is_file(self):
-        return True
-
-    def is_directory(self):
-        return False
 
 
 class SectionType(models.Model):
