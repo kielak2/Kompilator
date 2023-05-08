@@ -19,7 +19,7 @@ class Command(BaseCommand):
         dir5 = Directory.objects.create(name='Directory 5', owner=user, parent_directory=dir4)
         dir6 = Directory.objects.create(name='Directory 6', owner=user, parent_directory=dir5)
 
-        file1 = File.objects.create(name='File1', description='This is file 1', owner=user, directory=dir1)
+        file1 = File.objects.create(name='Hello.c', description='This is file 1', owner=user, directory=dir1, file_content="#include <stdio.h>\nint main() {\nprintf(" + "'Hello, World!'" + ");\n   return 0;\n}")
         file2 = File.objects.create(name='File2', description='This is file 1', owner=user, directory=dir3)
         file3 = File.objects.create(name='File3', description='This is file 1', owner=user, directory=dir3)
 

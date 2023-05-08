@@ -46,7 +46,7 @@ def runcode(request):
             with open('file.c', 'w') as f:
                 f.write(code)
 
-            result = subprocess.run(['sdcc', "-" + optimization, '-S', '-std=' + standard, "-" + procesor, cpuoption ,'file.c'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            result = subprocess.run(['sdcc', optimization, '-S', '-std=' + standard, "-" + procesor, cpuoption, 'file.c'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             if result.returncode == 0:
                 output = open('file.asm', 'r').read()
             else:
@@ -70,8 +70,7 @@ def upload_file(request):
             files = request.FILES.getlist('file')
             for file in files:
                 content = file.read().decode("utf-8")
-                file_obj = File.objects.create(name=str(file), description='This is file', owner=user, directory=dir1,
-                                               file=file, file_content=content)
+                file_obj = File.objects.create(name=str(file), description='This is file', owner=user, directory=dir1, file_content=content)
                 file_obj.save()
 
             return redirect('aww1')

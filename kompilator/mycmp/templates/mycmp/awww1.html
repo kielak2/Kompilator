@@ -82,9 +82,9 @@
               <div id="Tab2" class="footer">
                 <h2>Optymalizacje kompilacji:</h2>
                 <ul>
-                  <li><input type="radio" name="optimization" value="Os" id="Os"><label for="Os">Optymalizacja rozmiaru -Os (kosztem szybkości)</label></li>
-                  <li><input type="radio" name="optimization" value="O1" id="O1"><label for="O1">Optymalizacja rozmiaru i szybkości -O1</label></li>
-                  <li><input type="radio" name="optimization" value="O2" id="O2"><label for="O2">Optymalizacja szybkości -O2 (kosztem rozmiaru)</label></li>
+                  <li><input type="radio" name="optimization" value="--nostdlibcall" id="Os"><label for="Os">Wyłącz optymalizację wywołań biblioteki standardowej.</label></li>
+                  <li><input type="radio" name="optimization" value="--opt-code-size" id="O1"><label for="O1">Optymalizacja rozmiaru (kosztem szybkości)</label></li>
+                  <li><input type="radio" name="optimization" value="--opt-code-speed" id="O2"><label for="O2">Optymalizacja szybkości (kosztem rozmiaru)</label></li>
                 </ul>
               </div>
 
@@ -101,7 +101,7 @@
                   <div id="MCS">
                     <h3>MCS51 - wybierz rozmiar:</h3>
                     <ul>
-                        <li><input type="radio" name="MCSoption" value="model-small" id="model-small2"><label for="model-small">model-small</label></li>
+                        <li><input type="radio" name="MCSoption" value="model-small" id="model-small2"><label for="model-small2">model-small</label></li>
                           <li><input type="radio" name="MCSoption" value="model-medium" id="model-medium2"><label for="model-medium">model-medium</label></li>
                           <li><input type="radio" name="MCSoption" value="model-large" id="model-large2"><label for="model-large">model-large</label></li>
                     </ul>
@@ -110,16 +110,16 @@
                     <h3>Z80 - wybierz asembler:</h3>
                     <ul>
                       <li><input type="radio" name="Z80Soption" value="rgbds" id="rgbds"><label for="rgbds">rgbds</label></li>
-                      <li><input type="radio" name="Z80Soption" value="sdasz80" id="sdasz80"><label for="sdasz80">sdasz80</label></li>
+                      <li><input type="radio" name="Z80Soption" value="z80asm" id="sdasz80"><label for="sdasz80">z80asm</label></li>
                       <li><input type="radio" name="Z80Soption" value="isas" id="isas"><label for="isas">isas</label></li>
                     </ul>
                   </div>
                   <div id="STM">
                     <h3>STM8 - wybierz rozmiar:</h3>
                     <ul>
-                        <li><input type="radio" name="STMoption" value="model-small" id="model-small"><label for="model-small">model-small</label></li>
                           <li><input type="radio" name="STMoption" value="model-medium" id="model-medium"><label for="model-medium">model-medium</label></li>
                           <li><input type="radio" name="STMoption" value="model-large" id="model-large"><label for="model-large">model-large</label></li>
+                          <li style="opacity: 0;">a</li>
                     </ul>
                   </div>
               </div>

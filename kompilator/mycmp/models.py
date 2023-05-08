@@ -24,7 +24,6 @@ class File(models.Model):
     last_changed_accessibility = models.DateTimeField(auto_now=True)
     last_modified_at = models.DateTimeField(auto_now=True)
     directory = models.ForeignKey(Directory, on_delete=models.CASCADE, related_name='files')
-    file = models.FileField(null=True)
     file_content = models.TextField(null=True, blank=True)
 
 
