@@ -32,7 +32,7 @@ def runcode(request):
         STMoption = request.GET["STMoption"]
         cpuoption = ""
         if (procesor == "mmcs51"):
-            cpupotion = "--" + MCSoption
+            cpuoption = "--" + MCSoption
         elif (procesor == "mz80"):
             cpuoption = "--asm=" + Z80Soption
         elif (procesor == "mstm8")    :
@@ -41,6 +41,7 @@ def runcode(request):
         print(optimization)
         print(standard)
         print(procesor)
+        print(cpuoption)
         try:
             with open('file.c', 'w') as f:
                 f.write(code)
@@ -118,11 +119,6 @@ def delete_directory(request):
         form = DeleteDirectoryForm()
     return render(request, 'mycmp/directories_action.html', {'form': form, 'directories': directories})
 
-def show_file_content(request):
-    file = File.objects.get(pk=2)
-    with open(file.file.path, 'r') as f:
-        content = f.read()
-    return render(request, 'mycmp/show_file_content.html', {'file': file, 'content': content})
 
 
 

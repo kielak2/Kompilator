@@ -101,6 +101,37 @@ var standardProcesor = document.querySelectorAll('#Tab3 input[type="radio"]');
     });
   });
 
+  var mcsRadio = document.querySelectorAll('#MCS input[type="radio"]');
+
+  // Add event listeners to the radio buttons
+  mcsRadio.forEach(function (radio) {
+    radio.addEventListener('click', function () {
+      // Update the value of the hidden input field with the selected radio button's value
+      document.querySelector('#MCSoption').value = this.value;
+    });
+  });
+
+  var z80Radio = document.querySelectorAll('#Z80 input[type="radio"]');
+
+  // Add event listeners to the radio buttons
+  z80Radio.forEach(function (radio) {
+    radio.addEventListener('click', function () {
+      // Update the value of the hidden input field with the selected radio button's value
+      document.querySelector('#Z80Soption').value = this.value;
+    });
+  });
+
+  var stmRadio = document.querySelectorAll('#STM input[type="radio"]');
+
+  // Add event listeners to the radio buttons
+  stmRadio.forEach(function (radio) {
+    radio.addEventListener('click', function () {
+      // Update the value of the hidden input field with the selected radio button's value
+      document.querySelector('#STMoption').value = this.value;
+    });
+  });
+
+
 var compileBtn = document.getElementById('compile-btn');
 var myForm = document.getElementById('myForm');
 
@@ -108,15 +139,24 @@ compileBtn.addEventListener('click', function() {
   const selectedStandard = document.querySelector('#standard').value;
   const selectedProcessor = document.querySelector('#procesor').value;
   const selectedOptimization = document.querySelector('#optimization').value;
+  const selectedMcsOption = document.querySelector('#MCSoption').value;
+  const selectedZ80Option = document.querySelector('#Z80Soption').value;
+  const selectedStmOption = document.querySelector('#STMoption').value;
   localStorage.setItem('selectedStandard', selectedStandard);
   localStorage.setItem('selectedProcessor', selectedProcessor);
   localStorage.setItem('selectedOptimization', selectedOptimization);
+  localStorage.setItem('selectedMcsOption', selectedMcsOption);
+  localStorage.setItem('selectedZ80Option', selectedZ80Option);
+  localStorage.setItem('selectedStmOption', selectedStmOption);
   myForm.submit();
 });
 
 const selectedStandard = localStorage.getItem('selectedStandard');
 const selectedProcessor = localStorage.getItem('selectedProcessor');
 const selectedOptimization = localStorage.getItem('selectedOptimization');
+const selectedMcsOption = localStorage.getItem('selectedMcsOption');
+const selectedZ80Option = localStorage.getItem('selectedZ80Option');
+const selectedStmOption = localStorage.getItem('selectedStmOption');
 
 if (selectedStandard) {
   document.querySelector(`input[name="standard"][value="${selectedStandard}"]`).checked = true;
@@ -128,6 +168,18 @@ if (selectedProcessor) {
 
 if (selectedOptimization) {
   document.querySelector(`input[name="optimization"][value="${selectedOptimization}"]`).checked = true;
+}
+
+if (selectedMcsOption) {
+  document.querySelector(`input[name="MCSoption"][value="${selectedMcsOption}"]`).checked = true;
+}
+
+if (selectedZ80Option) {
+  document.querySelector(`input[name="Z80Soption"][value="${selectedZ80Option}"]`).checked = true;
+}
+
+if (selectedStmOption) {
+  document.querySelector(`input[name="STMoption"][value="${selectedStmOption}"]`).checked = true;
 }
 
 standardRadio.forEach(function (radio) {
@@ -144,7 +196,6 @@ standardProcesor.forEach(function (radio) {
   }
 });
 
-
 optimizationRadio.forEach(function (radio) {
   if (radio.checked) {
     // If a radio button is checked, set the value of the hidden input field to its value
@@ -152,6 +203,26 @@ optimizationRadio.forEach(function (radio) {
   }
 });
 
+mcsRadio.forEach(function (radio) {
+  if (radio.checked) {
+    // If a radio button is checked, set the value of the hidden input field to its value
+     document.querySelector('#MCSoption').value = radio.value;
+  }
+});
+
+z80Radio.forEach(function (radio) {
+  if (radio.checked) {
+    // If a radio button is checked, set the value of the hidden input field to its value
+     document.querySelector('#Z80Soption').value = radio.value;
+  }
+});
+
+stmRadio.forEach(function (radio) {
+  if (radio.checked) {
+    // If a radio button is checked, set the value of the hidden input field to its value
+     document.querySelector('#STMoption').value = radio.value;
+  }
+});
 
 
 function downloadFile() {

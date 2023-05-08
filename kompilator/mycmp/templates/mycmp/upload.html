@@ -9,20 +9,23 @@
 </head>
 <body>
 {% block content %}
+<div class="card-header">{{ title }}
+        <a href="{% url 'aww1' %}" class="btn btn-secondary float-right">Strona Główna</a>
+    </div>
     <div class="container mt-4">
         <div class="row justify-content-center">
             <div class="col-md-8">
                 <div class="card">
                     <div class="card-header">{{ title }}</div>
                     <div class="card-body">
-                        <h3>Delete File</h3>
+                        <h3>Usuń Plik</h3>
                         <hr>
                         <form action="{% url 'delete_file' %}" method="post">
                             {% csrf_token %}
                             <div class="form-group">
-                              <label for="id_file">File:</label>
+                              <label for="id_file">Pliki:</label>
                               <select name="file" id="id_file" class="form-control">
-                                <option value="">--Select file--</option>
+                                <option value="">--Wybierz Plik --</option>
                                 {% for file in files %}
                                   <option value="{{ file.id }}">{{ file.name }}</option>
                                 {% endfor %}
@@ -31,18 +34,18 @@
                                 <small class="text-danger">{{ form.errors.file }}</small>
                               {% endif %}
                             </div>
-                            <button type="submit" class="btn btn-danger">Delete</button>
+                            <button type="submit" class="btn btn-danger">Usuń</button>
                           </form>
                         <br>
                         <hr>
-                        <h3>Add File</h3>
+                        <h3>Dodaj Pliki</h3>
                         <hr>
                         <form action="{% url 'upload_file' %}" method="post" enctype="multipart/form-data">
                             {% csrf_token %}
                             <div class="form-group">
-                                <label for="id_directory">Directory:</label>
+                                <label for="id_directory">Folder:</label>
                                 <select name="directory" id="id_directory" class="form-control">
-                                    <option value="">--Select directory--</option>
+                                    <option value="">--Wybierz Folder--</option>
                                     {% for directory in directories %}
                                         <option value="{{ directory.id }}">{{ directory.name }}</option>
                                     {% endfor %}
@@ -58,7 +61,7 @@
                                     <small class="text-danger">{{ form.errors.file }}</small>
                                 {% endif %}
                             </div>
-                            <button type="submit" class="btn btn-primary">Add File</button>
+                            <button type="submit" class="btn btn-primary">Dodaj Pliki</button>
                         </form>
                     </div>
                 </div>

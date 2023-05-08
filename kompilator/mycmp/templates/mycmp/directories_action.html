@@ -9,20 +9,23 @@
 </head>
 <body>
 {% block content %}
+    <div class="card-header">{{ title }}
+        <a href="{% url 'aww1' %}" class="btn btn-secondary float-right">Strona Główna</a>
+    </div>
     <div class="container mt-4">
         <div class="row justify-content-center">
             <div class="col-md-8">
                 <div class="card">
                     <div class="card-header">{{ title }}</div>
                     <div class="card-body">
-                        <h3>Delete Directory</h3>
+                        <h3>Usuń Folder</h3>
                         <hr>
                         <form action="{% url 'delete_directory' %}" method="post">
                             {% csrf_token %}
                             <div class="form-group">
-                                <label for="id_directory">Directory:</label>
+                                <label for="id_directory">Foldery:</label>
                                 <select name="directory" id="id_directory" class="form-control">
-                                    <option value="">--Select directory--</option>
+                                    <option value="">--Wybierz Folder--</option>
                                     {% for directory in directories %}
                                         <option value="{{ directory.id }}">{{ directory.name }}</option>
                                     {% endfor %}
@@ -31,32 +34,32 @@
                                     <small class="text-danger">{{ form.errors.directory }}</small>
                                 {% endif %}
                             </div>
-                            <button type="submit" class="btn btn-danger">Delete</button>
+                            <button type="submit" class="btn btn-danger">Usuń</button>
                         </form>
                         <br>
                         <hr>
-                        <h3>Add Directory</h3>
+                        <h3>Dodaj Folder</h3>
                         <hr>
                         <form action="{% url 'add_directory' %}" method="post">
                             {% csrf_token %}
                             <div class="form-group">
-                                <label for="id_name">Name:</label>
+                                <label for="id_name">Nazwa:</label>
                                 <input type="text" name="name" id="id_name" class="form-control" required>
                             </div>
                             <div class="form-group">
-                                <label for="id_description">Description:</label>
+                                <label for="id_description">Opis:</label>
                                 <input type="text" name="description" id="id_description" class="form-control">
                             </div>
                             <div class="form-group">
-                                <label for="id_parent_directory">Parent Directory:</label>
+                                <label for="id_parent_directory">Katalog Nadrzędny:</label>
                                 <select name="parent_directory" id="id_parent_directory" class="form-control">
-                                    <option value="">--None--</option>
+                                    <option value="">--Brak--</option>
                                     {% for directory in directories %}
                                         <option value="{{ directory.id }}">{{ directory.name }}</option>
                                     {% endfor %}
                                 </select>
                             </div>
-                            <button type="submit" class="btn btn-primary">Add</button>
+                            <button type="submit" class="btn btn-primary">Dodaj</button>
                         </form>
                     </div>
                 </div>
