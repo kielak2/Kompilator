@@ -27,8 +27,10 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-
+LOGIN_REDIRECT_URL = '/mycmp/'
 # Application definition
+
+LOGOUT_REDIRECT_URL = '/mycmp/logout/'
 
 INSTALLED_APPS = [
     'django.contrib.admin',

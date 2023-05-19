@@ -1,9 +1,12 @@
 import sys
 from pyexpat.errors import messages
 
+from django.contrib.auth.forms import AuthenticationForm
 from django.shortcuts import render, redirect
 from django.template import loader
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
+from django.views.generic import FormView
+
 from .models import Directory
 from .models import File
 from .forms import UploadFileForm, AddDirectoryForm, DeleteDirectoryForm, DeleteFileForm
@@ -12,6 +15,7 @@ from django.shortcuts import get_object_or_404
 import subprocess
 import os
 
+from django.contrib.auth.views import LoginView, LogoutView
 def awww1(request):
     files = File.objects.all()
     directories = Directory.objects.all()
@@ -24,12 +28,12 @@ def runcode(request):
     directories = directories.filter(parent_directory__isnull=True)
     if request.method == "GET":
         code = request.GET['codearea']
-        standard = request.GET['standard']
-        procesor = request.GET['procesor']
-        optimization = request.GET['optimization']
-        MCSoption = request.GET['MCSoption']
-        Z80Soption = request.GET['Z80Soption']
-        STMoption = request.GET["STMoption"]
+        standard = request.GET.get('standard', "C99")
+        procesor = request.GET.get('procesor', "mstm8")
+        optimization = request.GET.get('optimization', "--opt-code-size")
+        MCSoption = request.GET.get('MCSoption', "model-medium")
+        Z80Soption = request.GET.get('Z80Soption', "z80asm")
+        STMoption = request.GET.get("STMoption", "model-medium")
         cpuoption = ""
         if (procesor == "mmcs51"):
             cpuoption = "--" + MCSoption
@@ -45,7 +49,7 @@ def runcode(request):
         try:
             with open('file.c', 'w') as f:
                 f.write(code)
-
+            print(optimization, "-S", "-std=" + standard, "-" + procesor, cpuoption)
             result = subprocess.run(['sdcc', optimization, '-S', '-std=' + standard, "-" + procesor, cpuoption, 'file.c'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             if result.returncode == 0:
                 output = open('file.asm', 'r').read()
@@ -118,12 +122,8 @@ def delete_directory(request):
         form = DeleteDirectoryForm()
     return render(request, 'mycmp/directories_action.html', {'form': form, 'directories': directories})
 
-
-
-
-
-
-
+class CustomLogoutView(LogoutView):
+    template_name = 'registration/logout.html'
 
 
 

@@ -13,6 +13,11 @@
         <div id="grid-container">
             <div class="menu-bar">
               <i class="bi bi-brightness-high-fill" id="toggleDark"></i>
+                {% if user.is_authenticated %}
+                    <button onclick="location.href='http://127.0.0.1:8000/mycmp/logout'" class="login-item">Wyloguj</button>
+                {% else %}
+                    <button onclick="location.href='http://127.0.0.1:8000/mycmp/login'" class="login-item">Login</button>
+                {% endif %}
                 <nav class="navbar">
                   <ul class="nav-menu">
                     <li class="nav-item">
@@ -26,7 +31,7 @@
                     </li>
                   </ul>
                   <div class="hamburger">
-                    <span class="bar"></span>s
+                    <span class="bar"></span>
                     <span class="bar"></span>
                     <span class="bar"></span>
                   </div>

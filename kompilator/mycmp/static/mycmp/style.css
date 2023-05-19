@@ -61,6 +61,34 @@ body {
   cursor: pointer;
 }
 
+.login-item {
+    position: absolute;
+    top: 4%;
+    right: 3%;
+    transform: translate(-50%, -50%);
+    background-color: #007bff;
+    color: #fff;
+    border-radius: 5px;
+    transition: 0.3s;
+    padding: 10px 20px; /* This gives your button some space */
+    border: none; /* This removes the default button border */
+    cursor: pointer; /* Changes the cursor on hover over the button */
+    font-size: 20px; /* Change as required */
+    text-decoration: none; /* Removes the underline on hover */
+}
+
+.login-item:hover {
+    background-color: #0056b3;
+}
+
+.login-item:active {
+    transform: translate(-50%, -48%);
+}
+
+.login-item:focus {
+    outline: none;
+}
+
 .bar {
   display: block;
   width: 25px;
@@ -287,7 +315,6 @@ body {
     .nav-menu.active {
       left: 0;
     }
-
 
 
     .footer-head button {

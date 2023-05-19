@@ -242,3 +242,35 @@ function downloadFile() {
     URL.revokeObjectURL(url);
   }
 }
+
+window.onload = function() {
+    // Create a mapping between the radio button values and the div ids
+    var idMap = {
+        "mmcs51": "MCS",
+        "mz80": "Z80",
+        "mstm8": "STM"
+    };
+
+    // Get all the radio buttons in Tab3
+    var radios = document.querySelectorAll('#Tab3 input[type="radio"]');
+
+    // Add a click event listener to each radio button
+    for (var i = 0; i < radios.length; i++) {
+        radios[i].addEventListener('click', function() {
+            // Hide all the processor-specific divs in Tab4
+            var divs = document.querySelectorAll('#Tab4 div');
+            for (var j = 0; j < divs.length; j++) {
+                divs[j].style.display = 'none';
+            }
+
+            // Show the div that corresponds to the selected processor
+            var selectedProcessor = idMap[this.value];
+            document.getElementById(selectedProcessor).style.display = 'block';
+        });
+
+        // If the radio button is already selected, trigger its click event
+        if (radios[i].checked) {
+            radios[i].click();
+        }
+    }
+}
