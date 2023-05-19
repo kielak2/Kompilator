@@ -10,6 +10,9 @@
 {% bootstrap_javascript %}
 
 {% block content %}
+<div class="card-header">{{ title }}
+        <a href="{% url 'register' %}" class="btn btn-secondary float-right">Zarejestruj się</a>
+    </div>
   <div class="container">
     <h2>Login</h2>
     {% for message in messages %}

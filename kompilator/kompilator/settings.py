@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     "mycmp",
     "mptt",
+    'widget_tweaks',
     'bootstrap5',
 ]
 

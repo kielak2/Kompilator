@@ -1,7 +1,9 @@
 import sys
 from pyexpat.errors import messages
 
+from django.contrib.auth import login
 from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.postgres import serializers
 from django.shortcuts import render, redirect
 from django.template import loader
 from django.http import HttpResponse, JsonResponse
@@ -9,22 +11,28 @@ from django.views.generic import FormView
 
 from .models import Directory
 from .models import File
-from .forms import UploadFileForm, AddDirectoryForm, DeleteDirectoryForm, DeleteFileForm
+from .forms import UploadFileForm, AddDirectoryForm, DeleteDirectoryForm, DeleteFileForm, NewUserForm
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
 import subprocess
 import os
 
 from django.contrib.auth.views import LoginView, LogoutView
+
+
 def awww1(request):
-    files = File.objects.all()
-    directories = Directory.objects.all()
-    directories = directories.filter(parent_directory__isnull=True)
+    if request.user.is_authenticated:
+        files = File.objects.filter(owner=request.user)
+        directories = Directory.objects.filter(owner=request.user)
+        directories = directories.filter(parent_directory__isnull=True)
+    else:
+        return redirect('login')  # 'login' should be the name of your login URL
+
     return render(request, 'mycmp/awww1.html', {'directories': directories, 'files': files})
 
 def runcode(request):
-    files = File.objects.all()
-    directories = Directory.objects.all()
+    files = File.objects.filter(owner=request.user)
+    directories = Directory.objects.filter(owner=request.user)
     directories = directories.filter(parent_directory__isnull=True)
     if request.method == "GET":
         code = request.GET['codearea']
@@ -63,45 +71,66 @@ def runcode(request):
                   {"code": code, "output": output, 'directories': directories, 'files': files})
 
 def upload_file(request):
-    directories=Directory.objects.all()
-    files = File.objects.all()
+    directories = Directory.objects.filter(owner=request.user)
+    files = File.objects.filter(owner=request.user)
     if request.method == "POST":
         form = UploadFileForm(request.POST, request.FILES)
         if form.is_valid():
             dir1 = form.cleaned_data['directory']
-            username = 'testuser'
+            username = request.user
             user = User.objects.get(username=username)
-            files = request.FILES.getlist('file')
-            for file in files:
+            filess = request.FILES.getlist('file')
+            for file in filess:
                 content = file.read().decode("utf-8")
                 file_obj = File.objects.create(name=str(file), description='This is file', owner=user, directory=dir1, file_content=content)
                 file_obj.save()
 
-            return redirect('aww1')
+            response = {"message": "File uploaded successfully."}
+            return JsonResponse(response)  # Return JSON response
+        else:
+            response = {"errors": form.errors}
+            return JsonResponse(response)  # Return JSON response
     else:
         form = UploadFileForm()
     return render(request, 'mycmp/upload.html', {'form': form, 'directories': directories, 'files': files})
 
+
 def delete_file(request):
-    files = File.objects.all()
     if request.method == 'POST':
         form = DeleteFileForm(request.POST)
         if form.is_valid():
             file = form.cleaned_data['file']
             file.delete()
-            return redirect('aww1')
+
+            # Get the updated list of files after deletion
+            files = File.objects.filter(owner=request.user)
+
+            # Create a list of file names
+            file_names = [file.name for file in files]
+
+            response = {"message": "File deleted successfully.", "files": file_names}
+            return JsonResponse(response)  # Return JSON response
+        else:
+            response = {"errors": form.errors}
+            return JsonResponse(response)  # Return JSON response
+
+        # If it's a GET request, just render the page normally
     else:
+        files = File.objects.filter(owner=request.user)
+        directories = Directory.objects.filter(owner=request.user)
         form = DeleteFileForm()
-    return render(request, 'mycmp/upload.html', {'form': form, 'files': files})
+        return render(request, 'mycmp/upload.html', {'form': form, 'directories': directories, 'files': files})
+
+
 
 
 def add_directory(request):
-    directories = Directory.objects.all()
+    directories = Directory.objects.filter(owner=request.user)
     if request.method == 'POST':
         form = AddDirectoryForm(request.POST)
         if form.is_valid():
             directory = form.save(commit=False)
-            username = 'testuser'
+            username = request.user
             user = User.objects.get(username=username)
             directory.owner = user # set the owner to the logged-in user
             directory.save()
@@ -111,7 +140,7 @@ def add_directory(request):
     return render(request, 'mycmp/add_directory.html', {'directories': directories})
 
 def delete_directory(request):
-    directories = Directory.objects.all()
+    directories = Directory.objects.filter(owner=request.user)
     if request.method == 'POST':
         form = DeleteDirectoryForm(request.POST)
         if form.is_valid():
@@ -125,10 +154,21 @@ def delete_directory(request):
 class CustomLogoutView(LogoutView):
     template_name = 'registration/logout.html'
 
+def register_request(request):
+    if request.method == "POST":
+        form = NewUserForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)
+            return redirect('login')
+    form = NewUserForm()
+    return render (request=request, template_name="mycmp/register.html", context={"register_form":form})
 
 
-
-
+def file_list_json(request):
+    files = File.objects.filter(owner=request.user)
+    file_list = list(files.values('id', 'name'))  # create a list of dictionaries, each containing file id and name
+    return JsonResponse({'files': file_list})
 
 
 

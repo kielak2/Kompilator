@@ -20,7 +20,7 @@
                     <div class="card-body">
                         <h3>Usuń Plik</h3>
                         <hr>
-                        <form action="{% url 'delete_file' %}" method="post">
+                        <form id="delete-file-form"  action="{% url 'delete_file' %}" method="post">
                             {% csrf_token %}
                             <div class="form-group">
                               <label for="id_file">Pliki:</label>
@@ -40,7 +40,7 @@
                         <hr>
                         <h3>Dodaj Pliki</h3>
                         <hr>
-                        <form action="{% url 'upload_file' %}" method="post" enctype="multipart/form-data">
+                       <form id="upload-file-form" action="{% url 'upload_file' %}" method="post" enctype="multipart/form-data">
                             {% csrf_token %}
                             <div class="form-group">
                                 <label for="id_directory">Folder:</label>
@@ -70,6 +70,94 @@
     </div>
 
 {% endblock %}
+<script>
 
+    function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+    function updateFileList() {
+    fetch('{% url 'file_list_json' %}')  // replace with the actual url to your file_list_json view
+    .then(response => response.json())
+    .then(data => {
+        let fileListElement = document.getElementById('id_file');  // replace with the id of your file list element
+
+        fileListElement.innerHTML = '';  // clear the existing file list
+
+        data.files.forEach(file => {
+            let option = document.createElement('option');
+            option.value = file.id;
+            option.textContent = file.name;
+            fileListElement.appendChild(option);
+        });
+    });
+}
+
+function uploadFile(event) {
+    event.preventDefault();
+    var form = document.getElementById('upload-file-form');
+    var formData = new FormData(form);
+
+    fetch('{% url 'upload_file' %}', {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': getCookie('csrftoken')
+        },
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.message) {
+            alert(data.message);
+            updateFileList();  // update the list of files after a successful upload
+        } else if (data.error) {
+            alert(data.error);
+        }
+    });
+}
+
+document.getElementById('upload-file-form').addEventListener('submit', uploadFile);
+
+
+function deleteFile(event) {
+    event.preventDefault();
+    var form = document.getElementById('delete-file-form');  // get the form
+    var formData = new FormData(form);
+
+    fetch('{% url 'delete_file' %}', {  // use Django's url template tag to get the URL
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': getCookie('csrftoken')
+        },
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.message) {
+            alert(data.message);
+            // Here you can update the list of files without reloading the page
+            // You will need to fetch the updated list of files and update your dropdown list of files
+            updateFileList();  // Call updateFileList function after successful delete
+        } else if (data.error) {
+            alert(data.error);
+        }
+    });
+}
+
+document.getElementById('delete-file-form').addEventListener('submit', deleteFile);
+
+
+</script>
 </body>
 </html>

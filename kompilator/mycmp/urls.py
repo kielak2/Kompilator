@@ -2,7 +2,7 @@ from django.urls import path
 from django.contrib.auth.views import LoginView
 from django.contrib.auth.views import LogoutView
 from . import views
-from .views import CustomLogoutView
+from .views import CustomLogoutView, register_request
 
 urlpatterns = [
     path('', views.awww1, name='aww1'),
@@ -13,4 +13,6 @@ urlpatterns = [
     path('runcode/', views.runcode, name='runcode'),
     path('login/', LoginView.as_view(), name='login'),
     path('logout/', CustomLogoutView.as_view(), name='logout'),
+    path("register/", register_request, name="register"),
+    path('file_list_json/', views.file_list_json, name='file_list_json'),
 ]

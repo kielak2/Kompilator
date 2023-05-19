@@ -10,6 +10,12 @@
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     </head>
     <body>
+
+    {% if not user.is_authenticated %}
+        <div class="alert alert-info" role="alert">
+            You are not logged in. Please <a href="http://127.0.0.1:8000/mycmp/login" class="alert-link">login</a> to access the features.
+        </div>
+    {% else %}
         <div id="grid-container">
             <div class="menu-bar">
               <i class="bi bi-brightness-high-fill" id="toggleDark"></i>
@@ -137,5 +143,6 @@
             </div>
         </div>
        <script src="{% static 'mycmp/script.js' %}"></script>
+      {% endif %}
     </body>
 </html>
