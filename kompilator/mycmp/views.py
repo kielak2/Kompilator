@@ -9,7 +9,7 @@ from django.template import loader
 from django.http import HttpResponse, JsonResponse
 from django.views.generic import FormView
 
-from .models import Directory
+from .models import Directory, FileSection
 from .models import File
 from .forms import UploadFileForm, AddDirectoryForm, DeleteDirectoryForm, DeleteFileForm, NewUserForm
 from django.contrib.auth.models import User
@@ -73,6 +73,85 @@ def runcode(request):
     return render(request, 'mycmp/awww1.html',
                   {"code": code, "output": output, 'directories': directories, 'files': files})
 
+def parse_code(code, file):
+    code = code.splitlines()
+    section_types = {
+        "procedury": "/* PROCEDURY */",
+        "komentarze": "/* KOMENTARZE */",
+        "dyrektywy kompilatora": "/* DYREKTYWY KOMPILATORA */",
+        "deklaracje zmiennych": "/* DEKLARACJE ZMIENNYCH */",
+        "wstawki asemblerowe": "/* WSTAWKI ASSEMBLEROWE */",
+    }
+
+    current_section_type = None
+    result = []
+
+    i = 0
+    begin = 0
+    end = 0
+    content = ""
+    for line in code:
+        if (line.strip().startswith("int ") or line.strip().startswith("float ") or line.strip().startswith("double ")
+            or line.strip().startswith("bool ") or line.strip().startswith("char ") or
+                line.strip().startswith("string ") or line.strip().startswith("void ")) and "(" in line:
+            # procedury
+            if current_section_type != "procedury":
+                if i != 0:
+                    file_section = FileSection(name=current_section_type, begin=begin, end=i-1, file=file, content=content)
+                    file_section.save()
+                current_section_type = "procedury"
+                result.append(section_types[current_section_type])
+                begin = i
+                content = ""
+        if line.strip().startswith("#"):
+            # Dyrektywny kompilatora
+            if current_section_type != "dyrektywy kompilatora":
+                if i != 0:
+                    file_section = FileSection(name=current_section_type, begin=begin, end=i-1, file=file, content=content)
+                    file_section.save()
+                current_section_type = "dyrektywy kompilatora"
+                result.append(section_types[current_section_type])
+                begin = i
+                content = ""
+        elif line.strip().startswith("/*") or line.strip().startswith("//"):
+            # procedury or komentarze
+            if current_section_type != "komentarze":
+                if i != 0:
+                    file_section = FileSection(name=current_section_type, begin=begin, end=i-1, file=file, content=content)
+                    file_section.save()
+                current_section_type = "komentarze"
+                result.append(section_types[current_section_type])
+                begin = i
+                content = ""
+        elif line.strip().startswith("__asm"):
+            # Wstawka asemblerowa
+            if current_section_type != "wstawki asemblerowe":
+                if i != 0:
+                    file_section = FileSection(name=current_section_type, begin=begin, end=i-1, file=file, content=content)
+                    file_section.save()
+                current_section_type = "wstawki asemblerowe"
+                result.append(section_types[current_section_type])
+                begin = i
+                content = ""
+        elif (line.strip().startswith("int ") or line.strip().startswith("float ") or line.strip().startswith("double ")
+              or line.strip().startswith("bool ") or line.strip().startswith("char ") or
+              line.strip().startswith("string ")) and line.strip().endswith(";"):
+            # Deklaracje zmiennych
+            if current_section_type != "deklaracje zmiennych":
+                if i != 0:
+                    file_section = FileSection(name=current_section_type, begin=begin, end=i-1, file=file, content=content)
+                    file_section.save()
+                current_section_type = "deklaracje zmiennych"
+                result.append(section_types[current_section_type])
+                begin = i
+                content = ""
+        i += 1
+        content += line + "\n"
+        result.append(line)
+
+    result = "\n".join(result)
+    return result
+
 def upload_file(request):
     if not request.user.is_authenticated:
         return redirect('login')
@@ -89,7 +168,9 @@ def upload_file(request):
             for file in filess:
                 content = file.read().decode("utf-8")
                 file_obj = File.objects.create(name=str(file), description='This is file', owner=user, directory=dir1, file_content=content)
+                file_obj = parse_code(content, file_obj)
                 file_obj.save()
+
 
             response = {"message": "File uploaded successfully."}
             return JsonResponse(response)  # Return JSON response
@@ -129,8 +210,6 @@ def delete_file(request):
         directories = Directory.objects.filter(owner=request.user)
         form = DeleteFileForm()
         return render(request, 'mycmp/upload.html', {'form': form, 'directories': directories, 'files': files})
-
-
 
 
 def add_directory(request):
@@ -196,7 +275,6 @@ def directory_list_json(request):
     directories = Directory.objects.filter(owner=request.user)
     directory_list = list(directories.values('id', 'name'))
     return JsonResponse({'directories': directory_list})
-
 
 
 
