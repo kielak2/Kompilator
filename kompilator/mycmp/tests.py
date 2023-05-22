@@ -1,9 +1,10 @@
-
+from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TestCase, Client
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import User
 from .models import Directory, File
 from django.urls import reverse
+from .forms import UploadFileForm, AddDirectoryForm, DeleteDirectoryForm, DeleteFileForm, NewUserForm
 class DirectoryModelTest(TestCase):
 
     @classmethod
@@ -99,3 +100,53 @@ class TestViews(TestCase):
         response = self.client.post(self.delete_file_url, {'file': self.test_file.id})
         self.assertEqual(response.status_code, 302)  # Should redirect to login
         self.assertTrue(File.objects.filter(name='testfile').exists())
+
+class TestForms(TestCase):
+
+    def setUp(self):
+        self.user = User.objects.create_user(username='testuser', password='12345')
+        self.directory = Directory.objects.create(name='test_dir', owner=self.user)
+        self.file = File.objects.create(name='test_file', directory=self.directory, owner=self.user)
+
+    def test_upload_file_form_valid_data(self):
+        uploaded_file = SimpleUploadedFile('test_file.txt', b'This is the file content.')
+        form = UploadFileForm(data={'directory': self.directory.id}, files={'file': [uploaded_file]})
+        self.assertTrue(form.is_valid())
+    def test_add_directory_form_valid_data(self):
+        form = AddDirectoryForm(data={
+            'name': 'test_directory',
+            'description': 'this is a test',
+            'parent_directory': self.directory.id
+        })
+
+        self.assertTrue(form.is_valid())
+
+    def test_delete_directory_form_valid_data(self):
+        form = DeleteDirectoryForm(data={
+            'directory': self.directory.id
+        })
+
+        self.assertTrue(form.is_valid())
+
+    def test_delete_file_form_valid_data(self):
+        form = DeleteFileForm(data={
+            'file': self.file.id
+        })
+
+        self.assertTrue(form.is_valid())
+
+    def test_new_user_form_valid_data(self):
+        form = NewUserForm(data={
+            'username': 'testuser11',
+            'email': 'testuser2@test.com',
+            'password1': 'ABcdh123',
+            'password2': 'ABcdh123'
+        })
+
+        self.assertTrue(form.is_valid())
+
+    def test_new_user_form_no_data(self):
+        form = NewUserForm(data={})
+
+        self.assertFalse(form.is_valid())
+        self.assertEquals(len(form.errors), 4)  # should have 4 fields with errors - username, email, password1, password2
