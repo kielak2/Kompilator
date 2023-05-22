@@ -26,6 +26,8 @@ class File(models.Model):
     directory = models.ForeignKey(Directory, on_delete=models.CASCADE, related_name='files')
     file_content = models.TextField(null=True, blank=True)
 
+    def __str__(self):
+        return self.name
 
 
 class SectionType(models.Model):

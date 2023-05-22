@@ -31,6 +31,9 @@ def awww1(request):
     return render(request, 'mycmp/awww1.html', {'directories': directories, 'files': files})
 
 def runcode(request):
+    if not request.user.is_authenticated:
+        return redirect('login')
+
     files = File.objects.filter(owner=request.user)
     directories = Directory.objects.filter(owner=request.user)
     directories = directories.filter(parent_directory__isnull=True)
@@ -71,6 +74,9 @@ def runcode(request):
                   {"code": code, "output": output, 'directories': directories, 'files': files})
 
 def upload_file(request):
+    if not request.user.is_authenticated:
+        return redirect('login')
+
     directories = Directory.objects.filter(owner=request.user)
     files = File.objects.filter(owner=request.user)
     if request.method == "POST":
@@ -96,6 +102,9 @@ def upload_file(request):
 
 
 def delete_file(request):
+    if not request.user.is_authenticated:
+        return redirect('login')
+
     if request.method == 'POST':
         form = DeleteFileForm(request.POST)
         if form.is_valid():
@@ -125,6 +134,9 @@ def delete_file(request):
 
 
 def add_directory(request):
+    if not request.user.is_authenticated:
+        return redirect('login')
+
     directories = Directory.objects.filter(owner=request.user)
     if request.method == 'POST':
         form = AddDirectoryForm(request.POST)
@@ -134,19 +146,29 @@ def add_directory(request):
             user = User.objects.get(username=username)
             directory.owner = user # set the owner to the logged-in user
             directory.save()
-            return redirect('aww1')
+            response = {"message": "Directory added successfully."}
+            return JsonResponse(response)  # Return JSON response
     else:
         form = AddDirectoryForm()
-    return render(request, 'mycmp/add_directory.html', {'directories': directories})
+    return render(request, 'mycmp/add_directory.html', {'directories': directories, 'form': form})
 
 def delete_directory(request):
+    if not request.user.is_authenticated:
+        return redirect('login')
+
     directories = Directory.objects.filter(owner=request.user)
+
     if request.method == 'POST':
         form = DeleteDirectoryForm(request.POST)
+
         if form.is_valid():
             dir = form.cleaned_data['directory']
             dir.delete()
-            return redirect('aww1')
+
+            directories_names = [directory.name for directory in directories]
+
+            response = {"message": "Directories deleted successfully.", "directories": directories_names}
+            return JsonResponse(response)  # Return JSON response
     else:
         form = DeleteDirectoryForm()
     return render(request, 'mycmp/directories_action.html', {'form': form, 'directories': directories})
@@ -170,7 +192,10 @@ def file_list_json(request):
     file_list = list(files.values('id', 'name'))  # create a list of dictionaries, each containing file id and name
     return JsonResponse({'files': file_list})
 
-
+def directory_list_json(request):
+    directories = Directory.objects.filter(owner=request.user)
+    directory_list = list(directories.values('id', 'name'))
+    return JsonResponse({'directories': directory_list})
 
 
 

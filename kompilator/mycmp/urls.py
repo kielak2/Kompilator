@@ -15,4 +15,5 @@ urlpatterns = [
     path('logout/', CustomLogoutView.as_view(), name='logout'),
     path("register/", register_request, name="register"),
     path('file_list_json/', views.file_list_json, name='file_list_json'),
+    path('directory_list_json', views.directory_list_json, name='directory_list_json'),
 ]
