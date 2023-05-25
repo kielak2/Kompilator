@@ -146,6 +146,13 @@ body {
 
 }
 
+ .asm-header {
+    color: red;
+}
+
+.asm-code {
+    color: darkblue;
+}
   
   .menu-bar, .choose-file, .code-box, .tab-box, .footer, .footer-head {
     box-sizing: border-box;

@@ -136,10 +136,13 @@
               </div>
 
              <div class="code-box">
-                <pre>
-                     {{ output }}
-                </pre>
-
+                {% for line in output %}
+                    <div class="asm">
+                        <pre class="asm-header">{{line.0}}</pre>
+                        <pre class="asm-code">{{line.1}}</pre>
+                    </div>
+                {% endfor %}
+                {{ error }}
             </div>
         </div>
        <script src="{% static 'mycmp/script.js' %}"></script>

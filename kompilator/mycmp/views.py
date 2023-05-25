@@ -1,5 +1,6 @@
 import sys
 from pyexpat.errors import messages
+import re
 
 from django.contrib.auth import login
 from django.contrib.auth.forms import AuthenticationForm
@@ -30,6 +31,25 @@ def awww1(request):
 
     return render(request, 'mycmp/awww1.html', {'directories': directories, 'files': files})
 
+def get_sections(lines):
+    section_pattern = r"^;[\t]*[-]+"
+    section_counter = 0
+    result = []
+    header = ""
+    code = ""
+    for line in lines:
+        if re.match(section_pattern, line):
+            section_counter += 1
+            if header != "" and code != "":
+                result.append([header, code])
+                header = ""
+                code = ""
+        if section_counter % 2 == 1:
+            header += line
+        else:
+            code += line
+    result.append([header, code])
+    return result
 def runcode(request):
     if not request.user.is_authenticated:
         return redirect('login')
@@ -53,17 +73,14 @@ def runcode(request):
         elif (procesor == "mstm8")    :
             cpuoption = "--" + STMoption
 
-        print(optimization)
-        print(standard)
-        print(procesor)
-        print(cpuoption)
         try:
             with open('file.c', 'w') as f:
                 f.write(code)
             print(optimization, "-S", "-std=" + standard, "-" + procesor, cpuoption)
             result = subprocess.run(['sdcc', optimization, '-S', '-std=' + standard, "-" + procesor, cpuoption, 'file.c'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             if result.returncode == 0:
-                output = open('file.asm', 'r').read()
+                output = open('file.asm', 'r').readlines()
+                output = get_sections(output)
             else:
                 output = result.stderr.decode('utf-8')
         except Exception as e:
@@ -168,7 +185,8 @@ def upload_file(request):
             for file in filess:
                 content = file.read().decode("utf-8")
                 file_obj = File.objects.create(name=str(file), description='This is file', owner=user, directory=dir1, file_content=content)
-                file_obj = parse_code(content, file_obj)
+                file_obj.save()
+                file_obj.file_content = parse_code(content, file_obj)
                 file_obj.save()
 
 
