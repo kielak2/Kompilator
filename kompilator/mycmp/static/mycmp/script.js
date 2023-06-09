@@ -62,13 +62,6 @@ document.querySelectorAll(".nav-link").forEach(n => n.
 
   //selector
 
-const content = document.querySelector(".content");
-const files = document.getElementsByClassName("file");
-for (let k = 0; k < files.length; ++k) {
-    files[k].addEventListener("click", function() {
-        content.textContent = this.getAttribute("data-content");
-    });
-}
 
  var standardRadio = document.querySelectorAll('#Tab1 input[type="radio"]');
 
@@ -274,3 +267,27 @@ window.onload = function() {
         }
     }
 }
+
+var myCodeMirror;
+
+document.addEventListener("DOMContentLoaded", function(){
+    // Assign to myCodeMirror inside the function
+    myCodeMirror = CodeMirror.fromTextArea(document.getElementById('code'), {
+        lineNumbers: true,
+        mode: "text/x-csrc",
+        height: "68vh",
+    });
+});
+
+const files = document.getElementsByClassName("file");
+for (let k = 0; k < files.length; ++k) {
+    files[k].addEventListener("click", function() {
+        var newCode = this.getAttribute("data-content");
+        myCodeMirror.getDoc().setValue(newCode);
+    });
+}
+
+
+
+
+

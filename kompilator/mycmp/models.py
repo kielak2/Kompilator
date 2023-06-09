@@ -31,10 +31,10 @@ class File(models.Model):
 
 
 class FileSection(models.Model):
-    name = models.CharField(max_length=32)
+    name = models.CharField(max_length=32, null=True)
     description = models.TextField(blank=True, null=True)
     create_date = models.DateField(auto_now=True)
-    begin = models.IntegerField()
-    end = models.IntegerField()
+    begin = models.IntegerField(null=True)
+    end = models.IntegerField(null=True)
     file = models.ForeignKey(File, on_delete=models.CASCADE)
     content = models.TextField(blank=True, null=True)
