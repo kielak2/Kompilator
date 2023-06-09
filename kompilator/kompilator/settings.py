@@ -12,7 +12,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 import os
 import django_heroku
 import dj_database_url
-from dotenv import load_dotenv  
+from dotenv import load_dotenv
 from pathlib import Path
 load_dotenv()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
