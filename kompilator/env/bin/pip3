@@ -1,4 +1,4 @@
-#!/home/students/inf/m/mk438505/AWWW/AWWW/kompilator/env/bin/python3
+#!/home/maciek/AWWW/kompilator/env/bin/python
 # -*- coding: utf-8 -*-
 import re
 import sys
